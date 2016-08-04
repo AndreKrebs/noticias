@@ -24,7 +24,6 @@
                 <td><?= h($usuario->nome) ?></td>
                 <td><?= h($usuario->email) ?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $usuario->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $usuario->id]) ?>
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $usuario->id], ['confirm' => __('Are you sure you want to delete # {0}?', $usuario->id)]) ?>
                 </td>

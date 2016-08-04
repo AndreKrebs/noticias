@@ -28,7 +28,6 @@
                 <td><?= h($noticia->resumo) ?></td>
                 <td><?= h($noticia->tags) ?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $noticia->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $noticia->id]) ?>
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $noticia->id], ['confirm' => __('Are you sure you want to delete # {0}?', $noticia->id)]) ?>
                 </td>

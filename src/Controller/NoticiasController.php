@@ -56,6 +56,38 @@ class NoticiasController extends AppController
         $noticia = $this->Noticias->newEntity();
         if ($this->request->is('post')) {
             $noticia = $this->Noticias->patchEntity($noticia, $this->request->data);
+            
+            $filePath =  DS . 'img' . DS . 'noticias';
+            
+            // Upload de arquivo
+            // validação simples usando @
+            if(@$this->request->data['imagem']['name']) {
+                
+                $folder = new Folder('../webroot'); 
+
+                // verifica se diretorio não existe 
+                if (file_exists($folder->path.$filePath)===false) {
+                    // cria diretorio para imagens
+                    $folder->create($filePath);
+                }
+                
+                
+                // md5 do conteudo do arquivo
+                $fileNameMd5 = md5_file($this->request->data['imagem']['tmp_name']);
+                
+                // separa extenção do arquivo
+                $extFile = explode('.', $this->request->data['imagem']['name']);
+                
+                // concatena a extenção no nome md5
+                $fileNameMd5 .= ".".$extFile[count($extFile)-1];
+                
+                // move o arquivo
+                move_uploaded_file($this->request->data['imagem']['tmp_name'], $folder->path.$filePath . DS . $fileNameMd5);
+                
+                // substitui os dados do arquivo pelo novo nome que deve salvar no BD
+                $noticia['imagem'] = $fileNameMd5;
+            } 
+            
             if ($this->Noticias->save($noticia)) {
                 $this->Flash->success(__('The noticia has been saved.'));
 

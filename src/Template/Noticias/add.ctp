@@ -7,7 +7,7 @@
     </ul>
 </nav>
 <div class="noticias form large-9 medium-8 columns content">
-    <?= $this->Form->create($noticia) ?>
+    <?= $this->Form->create($noticia, ['enctype'=> 'multipart/form-data']) ?>
     <fieldset>
         <legend><?= __('Add Noticia') ?></legend>
         <?php
@@ -16,7 +16,7 @@
             echo $this->Form->input('resumo');
             echo $this->Form->input('descricao');
             echo $this->Form->input('tags');
-            echo $this->Form->input('imagem');
+            echo $this->Form->input('imagem', ['type'=>'file']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
