@@ -2,6 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Filesystem\Folder;
+
 
 /**
  * Noticias Controller
@@ -79,7 +81,42 @@ class NoticiasController extends AppController
         $noticia = $this->Noticias->get($id, [
             'contain' => []
         ]);
+        
         if ($this->request->is(['patch', 'post', 'put'])) {
+            
+            $filePath =  DS . 'img' . DS . 'noticias';
+            
+            // Upload de arquivo
+            // validação simples usando @
+            if(@$this->request->data['imagem']['name']) {
+                
+                $folder = new Folder('../webroot'); 
+
+                // verifica se diretorio não existe 
+                if (file_exists($folder->path.$filePath)===false) {
+                    // cria diretorio para imagens
+                    $folder->create($filePath);
+                }
+                
+                
+                // md5 do conteudo do arquivo
+                $fileNameMd5 = md5_file($this->request->data['imagem']['tmp_name']);
+                
+                // separa extenção do arquivo
+                $extFile = explode('.', $this->request->data['imagem']['name']);
+                
+                // concatena a extenção no nome md5
+                $fileNameMd5 .= ".".$extFile[count($extFile)-1];
+                
+                // move o arquivo
+                move_uploaded_file($this->request->data['imagem']['tmp_name'], $folder->path.$filePath . DS . $fileNameMd5);
+                
+                // substitui os dados do arquivo pelo novo nome que deve salvar no BD
+                $this->request->data['imagem'] = $fileNameMd5;
+            } else {
+                unset($this->request->data['imagem']);
+            }
+            
             $noticia = $this->Noticias->patchEntity($noticia, $this->request->data);
             if ($this->Noticias->save($noticia)) {
                 $this->Flash->success(__('The noticia has been saved.'));
@@ -89,7 +126,8 @@ class NoticiasController extends AppController
                 $this->Flash->error(__('The noticia could not be saved. Please, try again.'));
             }
         }
-        $usuarios = $this->Noticias->Usuarios->find('list', ['limit' => 200]);
+        $usuarios = $this->Noticias->Usuarios->find('list', [ 'limit' => 200]);
+        
         $this->set(compact('noticia', 'usuarios'));
         $this->set('_serialize', ['noticia']);
     }
